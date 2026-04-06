@@ -1,4 +1,6 @@
-const API = '/api';
+// Auto-detect base path — if served under /war-room, prefix API calls
+const BASE = window.location.pathname.startsWith('/war-room') ? '/war-room' : '';
+const API = `${BASE}/api`;
 
 function getToken() {
   return localStorage.getItem('iconic_token');
@@ -13,7 +15,7 @@ async function request(path, options = {}) {
   if (res.status === 401) {
     localStorage.removeItem('iconic_token');
     localStorage.removeItem('iconic_user');
-    window.location.href = '/login';
+    window.location.href = `${BASE}/login`;
     throw new Error('Unauthorized');
   }
   const data = await res.json();

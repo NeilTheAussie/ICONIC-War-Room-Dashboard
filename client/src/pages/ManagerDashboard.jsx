@@ -17,7 +17,7 @@ export default function ManagerDashboard() {
   const [routingLeadId, setRoutingLeadId] = useState(null);
   const [routingNotes, setRoutingNotes] = useState('');
   const [showAddLead, setShowAddLead] = useState(false);
-  const [newLead, setNewLead] = useState({ first_name: '', last_name: '', phone: '', email: '', pool: 'old_lead', state: '', timezone: '', last_message: '' });
+  const [newLead, setNewLead] = useState({ first_name: '', last_name: '', phone: '', email: '', pool: 'old_lead', state: '', timezone: '', last_message: '', booked_time: '' });
 
   const refresh = useCallback(async () => {
     try {
@@ -141,7 +141,10 @@ export default function ManagerDashboard() {
                 <div key={lead.id} className={`bg-bg2 border rounded-lg p-3 ${waitSec > 180 ? 'border-red/50' : waitSec > 90 ? 'border-org/50' : 'border-bdr'}`}>
                   <div className="flex justify-between items-start">
                     <div>
-                      <WeightBadge weight={lead.weight} />
+                      <div className="flex items-center gap-2">
+                        <WeightBadge weight={lead.weight} />
+                        {lead.booked_time && <span className="text-[10px] font-mono font-bold text-pur bg-pur/10 px-2 py-0.5 rounded">🕐 {lead.booked_time}</span>}
+                      </div>
                       <div className="text-sm font-bold text-txtb mt-1">{lead.first_name} {lead.last_name}</div>
                       <div className="text-xs text-txtd mt-0.5">
                         Replied <span className={waitSec < 120 ? 'text-grn font-semibold' : waitSec < 300 ? 'text-org font-semibold' : 'text-red font-semibold'}>{waitStr} ago</span>
@@ -257,6 +260,7 @@ export default function ManagerDashboard() {
                   <option value="old_lead">Old Lead (W1)</option>
                 </select>
                 <input placeholder="State (e.g. TX)" value={newLead.state} onChange={e => setNewLead({...newLead, state: e.target.value})} className="bg-bg3 border border-bdr rounded px-3 py-2 text-sm text-txtb" />
+                <input type="time" value={newLead.booked_time} onChange={e => setNewLead({...newLead, booked_time: e.target.value})} className="bg-bg3 border border-bdr rounded px-3 py-2 text-sm text-txtb" title="Booked time" />
               </div>
               <input placeholder="Last message..." value={newLead.last_message} onChange={e => setNewLead({...newLead, last_message: e.target.value})} className="w-full bg-bg3 border border-bdr rounded px-3 py-2 text-sm text-txtb" />
               <div className="flex gap-2 justify-end">

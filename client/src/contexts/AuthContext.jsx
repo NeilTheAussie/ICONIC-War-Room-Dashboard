@@ -17,14 +17,30 @@ export function AuthProvider({ children }) {
         setUser(data.user);
         localStorage.setItem('iconic_user', JSON.stringify(data.user));
       }).catch(() => {
-        localStorage.removeItem('iconic_token');
-        localStorage.removeItem('iconic_user');
-        setUser(null);
+        // Token invalid — auto-login as admin
+        autoLogin();
       }).finally(() => setLoading(false));
     } else {
-      setLoading(false);
+      // No token — auto-login as admin (no password required)
+      autoLogin();
     }
   }, []);
+
+  async function autoLogin() {
+    try {
+      const data = await api.login('neil@stingrai.com', 'iconic2026');
+      localStorage.setItem('iconic_token', data.token);
+      localStorage.setItem('iconic_user', JSON.stringify(data.user));
+      setUser(data.user);
+    } catch {
+      // If auto-login fails, just set a fake admin user so the UI renders
+      const fakeUser = { id: 1, email: 'neil@stingrai.com', name: 'Neil', role: 'admin', status: 'offline' };
+      setUser(fakeUser);
+      localStorage.setItem('iconic_user', JSON.stringify(fakeUser));
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const login = useCallback(async (email, password) => {
     const data = await api.login(email, password);

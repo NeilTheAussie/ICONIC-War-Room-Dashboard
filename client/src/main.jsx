@@ -7,7 +7,7 @@ import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={window.location.pathname.startsWith('/war-room') ? '/war-room' : '/'}>
       <AuthProvider>
         <App />
       </AuthProvider>
